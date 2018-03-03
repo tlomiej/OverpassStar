@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="overpass-star-element">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `overpass-star-element`
+     * GUI for overpass api build in polymer 2
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class OverpassStarElement extends Polymer.Element {
+      static get is() { return 'overpass-star-element'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'overpass-star-element'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(OverpassStarElement.is, OverpassStarElement);
+  </script>
+</dom-module>
