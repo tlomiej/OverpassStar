@@ -1,4 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 
 <dom-module id="overpass-star-element">
   <template>
@@ -7,7 +10,11 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+
+   <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="[out:json];node[amenity=fast_food](50.89610395554359,16.2158203125,53.258641373488096,23.499755859375);out;"
+      handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
+    <paper-button raised class="black" on-tap="executeQuery">Run</paper-button>
+    <div>[[queryResult]]</div>
   </template>
 
   <script>
@@ -23,12 +30,31 @@
       static get is() { return 'overpass-star-element'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'overpass-star-element'
-          }
+          queryResult:
+            {
+              type: String,
+              value: ''
+            }
         };
       }
+
+
+      handleResponse(response) {
+        console.log("Resp");
+        if (response && response.detail && response.detail.response) {
+          let t = response.detail.response;
+          this.queryResult = JSON.stringify(t);
+        }
+        else {
+          alert("Error");
+        }
+        ;
+      }
+      executeQuery() {
+        console.log("Click!")
+        this.$.eventsAjax.generateRequest()
+      }
+
     }
 
     window.customElements.define(OverpassStarElement.is, OverpassStarElement);
