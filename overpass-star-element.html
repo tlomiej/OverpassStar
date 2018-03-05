@@ -1,21 +1,94 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../app-layout/app-layout.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+<link rel="import" href="../app-layout/app-header/app-header.html">
+<link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
 
 <dom-module id="overpass-star-element">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-      
-    </style>
+    <custom-style>
+      <style is="custom-style">
+        html,
+        body {
+          margin: 0;
+          font-family: 'Roboto', 'Noto', sans-serif;
+          -webkit-font-smoothing: antialiased;
+          background: #f1f1f1;
+          max-height: 368px;
+        }
 
-   <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="[out:json];node[amenity=fast_food](50.89610395554359,16.2158203125,53.258641373488096,23.499755859375);out;"
-      handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
-    <paper-button raised class="black" on-tap="executeQuery">Run</paper-button>
-    <div>[[queryResult]]</div>
+        app-toolbar {
+          background-color: #4285f4;
+          color: #fff;
+        }
+
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
+
+        paper-icon-button+[main-title] {
+          margin-left: 24px;
+        }
+
+        paper-progress {
+          display: block;
+          width: 100%;
+          --paper-progress-active-color: rgba(255, 255, 255, 0.5);
+          --paper-progress-container-color: transparent;
+        }
+
+        app-header {
+          @apply --layout-fixed-top;
+          color: #fff;
+          --app-header-background-rear-layer: {
+            background-color: #ef6c00;
+          }
+          ;
+        }
+
+        app-drawer {
+          --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);
+          --app-drawer-content-container: {
+            background-color: #B0BEC5;
+          }
+        }
+
+        sample-content {
+          padding-top: 64px;
+        }
+
+        #sampleData {
+          padding-top: 64px;
+        }
+      </style>
+    </custom-style>
+
+
+    <app-header reveals>
+      <app-toolbar>
+        <div main-title>OverpassStar</div>
+        <paper-icon-button icon="delete"></paper-icon-button>
+        <paper-icon-button icon="search"></paper-icon-button>
+        <paper-icon-button icon="close"></paper-icon-button>
+      </app-toolbar>
+    </app-header>
+    <app-drawer id="drawer" swipe-open></app-drawer>
+    <div id="sampleData">
+      <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="{{querySet}}" handle-as="json"
+        on-response="handleResponse" debounce-duration="300"></iron-ajax>
+        <paper-text-input value="{{querySet}}"></paper-text-input>
+      <paper-button raised class="black" on-tap="executeQuery">Run</paper-button>
+
+      <div>[[queryResult]]</div>
+    </div>
+
+
+
   </template>
 
   <script>
@@ -31,6 +104,10 @@
       static get is() { return 'overpass-star-element'; }
       static get properties() {
         return {
+          querySet: {
+            type: String,
+            value: '[out:json];node[amenity=fast_food](50.89610395554359,16.2158203125,53.258641373488096,23.499755859375);out;'
+          },
           queryResult:
             {
               type: String,
