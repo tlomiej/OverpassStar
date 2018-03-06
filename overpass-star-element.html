@@ -6,8 +6,13 @@
 <link rel="import" href="../paper-input/paper-textarea.html">
 <link rel="import" href="../app-layout/app-header/app-header.html">
 <link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-progress-button/paper-progress-button.html">
+<link rel="import" href="../paper-progress-button/paper-progress-button.html">
+
+<link rel="import" href="../leaflet-map/component/leaflet-map.html">
 
 <dom-module id="overpass-star-element">
   <template>
@@ -65,6 +70,12 @@
         #sampleData {
           padding-top: 64px;
         }
+
+        leaflet-map {
+          max-width: 20em;
+          height: 20em;
+          border: 1px solid #aaa;
+        }
       </style>
     </custom-style>
 
@@ -77,13 +88,17 @@
         <paper-icon-button icon="close"></paper-icon-button>
       </app-toolbar>
     </app-header>
-    <app-drawer id="drawer" swipe-open></app-drawer>
     <div id="sampleData">
       <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="{{querySet}}" handle-as="json"
         on-response="handleResponse" debounce-duration="300"></iron-ajax>
-        <paper-text-input value="{{querySet}}"></paper-text-input>
-      <paper-button raised class="black" on-tap="executeQuery">Run</paper-button>
+      <paper-textarea label="Query" value="{{querySet}}"></paper-textarea>
 
+      <paper-progress-button on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]" raised="true" active-text="Run"
+        inactive-text="Execute..." on-pressed="toggleActive"></paper-progress-button>
+
+      <leaflet-map latitude="51.505" longitude="-0.09" zoom="13">
+      </leaflet-map>
+      
       <div>[[queryResult]]</div>
     </div>
 
@@ -112,7 +127,15 @@
             {
               type: String,
               value: ''
-            }
+            },
+          _ppb_activate: {
+            type: Boolean,
+            value: true
+          },
+          _ppb_disabled: {
+            type: Boolean,
+            value: false
+          }
         };
       }
 
@@ -122,14 +145,17 @@
         if (response && response.detail && response.detail.response) {
           let t = response.detail.response;
           this.queryResult = JSON.stringify(t);
+          this._ppb_activate = true
         }
         else {
+          this._ppb_activate = true
           alert("Error");
         }
         ;
       }
       executeQuery() {
         console.log("Click!")
+        this._ppb_activate = false
         this.$.eventsAjax.generateRequest()
       }
 
