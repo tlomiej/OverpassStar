@@ -96,9 +96,13 @@
       <paper-progress-button on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]" raised="true" active-text="Run"
         inactive-text="Execute..." on-pressed="toggleActive"></paper-progress-button>
 
-      <leaflet-map latitude="51.505" longitude="-0.09" zoom="13">
+      <leaflet-map latitude="50.89610395554359" longitude="16.215820312" zoom="5">
+
+        <template is="dom-bind">
+          <leaflet-geojson color="#FF0000" data="[[queryResult]]"></leaflet-geojson>
+        </template>
       </leaflet-map>
-      
+
       <div>[[queryResult]]</div>
     </div>
 
@@ -155,8 +159,17 @@
       }
       executeQuery() {
         console.log("Click!")
-        this._ppb_activate = false
-        this.$.eventsAjax.generateRequest()
+        this._ppb_activate = false;
+        let req = this.$.eventsAjax.generateRequest();
+        let p = req.completes;
+        p.catch(err => {
+          this._ppb_activate = true;
+          alert(err);
+          console.log('err', err);
+          console.log('statusText', req.statusText);
+          console.log('status', req.status);
+        });
+
       }
 
     }
