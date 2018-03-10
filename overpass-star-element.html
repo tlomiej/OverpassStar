@@ -2,6 +2,7 @@
 <link rel="import" href="../app-layout/app-layout.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../leaflet-map/component/leaflet-map.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../app-layout/app-header/app-header.html">
 <link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
@@ -11,7 +12,7 @@
 <link rel="import" href="../paper-progress-button/paper-progress-button.html">
 <link rel="import" href="../monaco-editor/monaco-editor.html">
 
-<link rel="import" href="../leaflet-map/component/leaflet-map.html">
+
 
 <dom-module id="overpass-star-element">
   <template>
@@ -68,17 +69,25 @@
 
         #sampleData {
           padding-top: 64px;
+          z-index: 1050;
+          
         }
 
         leaflet-map {
-          max-width: 20em;
-          height: 20em;
-          border: 1px solid #aaa;
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          z-index: 5;
         }
 
+
         monaco-editor {
-          width: 520px;
+          width: 100%;
           height: 300px;
+          background: red;
+          z-index: 1050;
         }
       </style>
     </custom-style>
@@ -93,20 +102,26 @@
       </app-toolbar>
     </app-header>
     <div id="sampleData">
+      <leaflet-map latitude="52.235" longitude="19.701" zoom="6">
       <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="{{querySet}}" handle-as="json"
         on-response="handleResponse" debounce-duration="300"></iron-ajax>
-      <monaco-editor minimap json-validate language="json" json-schemas="[[schemas]]" value="{{querySet}}">
+
+      <monaco-editor minimap json-validate="true" language="json" json-schemas="[[schemas]]" value="{{querySet}}">
       </monaco-editor>
 
       <paper-progress-button on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]" raised="true" active-text="Run"
         inactive-text="Execute..." on-pressed="toggleActive"></paper-progress-button>
 
-      <leaflet-map latitude="50.89610395554359" longitude="16.215820312" zoom="5">
-
-        <template is="dom-bind">
+      
+        <!--  <template is="dom-bind">
           <leaflet-geojson color="#FF0000" data="[[queryResult]]"></leaflet-geojson>
-        </template>
+        </template> -->
+
       </leaflet-map>
+
+
+
+
 
       <div>[[queryResult]]</div>
     </div>
@@ -130,7 +145,9 @@
         return {
           querySet: {
             type: String,
-            value: '[out:json];node[amenity=fast_food](50.89610395554359,16.2158203125,53.258641373488096,23.499755859375);out;'
+            //value: '[out:json];node[amenity=fast_food](50.89610395554359,16.2158203125,53.258641373488096,23.499755859375);out;'.split(';').join(';\n')
+            value: '[timeout:10][out:json];(node(around:75.9375,51.5533,21.8207);way(around:75.9375,51.5533,21.8207));out tags geom(51.552579672269054,21.832408905029297,51.5687476640869,21.864595413208008);relation(around:75.9375,51.5533,21.8207);out geom(51.552579672269054,21.832408905029297,51.5687476640869,21.864595413208008);'.split(';').join(';\n')
+
           },
           queryResult:
             {
