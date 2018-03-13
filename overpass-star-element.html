@@ -28,7 +28,7 @@
         }
 
         app-toolbar {
-          background-color: #4285f4;
+          background-color: #c6390d;
           color: #fff;
         }
 
@@ -77,6 +77,11 @@
           position: relative;
         }
 
+        #appHeader {
+          z-index: 600000;
+          position: relative;
+        }
+
         leaflet-map {
           width: 100%;
           height: 100%;
@@ -89,32 +94,44 @@
 
         monaco-editor {
           width: 100%;
-          height: 200px;
+          height: 100%;
           background: red;
           position: relative;
           z-index: 10005;
+        }
+
+        app-drawer {
+          /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8); */
+         /*  --app-drawer-content-container: {
+            background-color: #B0BEC5;
+          } */
+          z-index: 600000;
         }
       </style>
     </custom-style>
 
 
-    <app-header reveals>
+    <app-header reveals id="appHeader">
       <app-toolbar>
+        <paper-icon-button icon="menu" on-tap="openDrawer"></paper-icon-button>
         <div main-title>OverpassStar</div>
         <paper-icon-button icon="delete"></paper-icon-button>
         <paper-icon-button icon="search"></paper-icon-button>
         <paper-icon-button icon="close"></paper-icon-button>
       </app-toolbar>
     </app-header>
+    <app-drawer id="drawer" swipe-open>
+      <div>
+        <monaco-editor language="json" json-schemas="[[schemas]]" value="{{querySet}}">
+        </monaco-editor>
+      </div>
+    </app-drawer>
     <div id="sampleData">
 
       <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="{{querySet}}" handle-as="json"
         on-response="handleResponse" debounce-duration="300"></iron-ajax>
 
-      <div>
-        <monaco-editor minimap json-validate="true" language="json" json-schemas="[[schemas]]" value="{{querySet}}">
-        </monaco-editor>
-      </div>
+
 
 
       <paper-progress-button id="runQueryButton" on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]"
@@ -201,6 +218,11 @@
           console.log('status', req.status);
         });
 
+      }
+
+      openDrawer() {
+        console.log("Open")
+        this.$.drawer.toggle();
       }
 
     }
