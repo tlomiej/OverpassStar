@@ -11,7 +11,7 @@
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../paper-progress-button/paper-progress-button.html">
 <link rel="import" href="../monaco-editor/monaco-editor.html">
-
+<link rel="import" href="../paper-dialog/paper-dialog.html">
 
 
 <dom-module id="overpass-star-element">
@@ -102,7 +102,7 @@
 
         app-drawer {
           /* --app-drawer-scrim-background: rgba(0, 0, 100, 0.8); */
-         /*  --app-drawer-content-container: {
+          /*  --app-drawer-content-container: {
             background-color: #B0BEC5;
           } */
           z-index: 600000;
@@ -110,12 +110,16 @@
       </style>
     </custom-style>
 
+    <paper-dialog id="dialogTemp">
+        <h1>paper dialog</h1>
+      </paper-dialog>
+
 
     <app-header reveals id="appHeader">
       <app-toolbar>
         <paper-icon-button icon="menu" on-tap="openDrawer"></paper-icon-button>
         <div main-title>OverpassStar</div>
-        <paper-icon-button icon="delete"></paper-icon-button>
+        <paper-icon-button icon="delete" onclick="console.log('Click');dialogTemp.open()"></paper-icon-button>
         <paper-icon-button icon="search"></paper-icon-button>
         <paper-icon-button icon="close"></paper-icon-button>
       </app-toolbar>
@@ -125,7 +129,13 @@
         <monaco-editor language="json" json-schemas="[[schemas]]" value="{{querySet}}">
         </monaco-editor>
       </div>
+
+      <paper-progress-button id="runQueryButton" on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]"
+        raised="true" active-text="Run" inactive-text="Execute..." on-pressed="toggleActive"></paper-progress-button>
+
     </app-drawer>
+
+
     <div id="sampleData">
 
       <iron-ajax id="eventsAjax" method="post" url="https://overpass-api.de/api/interpreter" body="{{querySet}}" handle-as="json"
@@ -133,9 +143,6 @@
 
 
 
-
-      <paper-progress-button id="runQueryButton" on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]"
-        raised="true" active-text="Run" inactive-text="Execute..." on-pressed="toggleActive"></paper-progress-button>
 
 
       <!--  <template is="dom-bind">
@@ -150,6 +157,11 @@
       <leaflet-map latitude="52.235" longitude="19.701" zoom="6">
       </leaflet-map>
       <!--       <div>[[queryResult]]</div> -->
+    </div>
+
+
+    <div>
+
     </div>
 
 
