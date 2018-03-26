@@ -18,6 +18,7 @@
   <template>
     <custom-style>
       <style is="custom-style">
+        
         html,
         body {
           margin: 0;
@@ -110,16 +111,23 @@
       </style>
     </custom-style>
 
-    <paper-dialog id="dialogTemp">
-        <h1>paper dialog</h1>
-      </paper-dialog>
+<!--     <paper-dialog id="dialogTemp">
+      <div>
+        <monaco-editor language="json" json-schemas="[[schemas]]" value="{{querySet}}">
+        </monaco-editor>
+      </div>
 
+      <paper-progress-button id="runQueryButton" on-tap="executeQuery" active="[[_ppb_activate]]" disabled="[[_ppb_disabled]]"
+        raised="true" active-text="Run" inactive-text="Execute..." on-pressed="toggleActive"></paper-progress-button>
+
+    </paper-dialog>
+ -->
 
     <app-header reveals id="appHeader">
       <app-toolbar>
         <paper-icon-button icon="menu" on-tap="openDrawer"></paper-icon-button>
         <div main-title>OverpassStar</div>
-        <paper-icon-button icon="delete" onclick="console.log('Click');dialogTemp.open()"></paper-icon-button>
+        <paper-icon-button icon="delete" on-tap="openDialog"></paper-icon-button>
         <paper-icon-button icon="search"></paper-icon-button>
         <paper-icon-button icon="close"></paper-icon-button>
       </app-toolbar>
@@ -142,20 +150,12 @@
         on-response="handleResponse" debounce-duration="300"></iron-ajax>
 
 
+      <leaflet-map options='{"center":[41.9,12.5],"zoom":9}'>
 
-
-
-      <!--  <template is="dom-bind">
-          <leaflet-geojson color="#FF0000" data="[[queryResult]]"></leaflet-geojson>
-        </template> -->
-
-
-
-
-
-
-      <leaflet-map latitude="52.235" longitude="19.701" zoom="6">
+        <!-- <leaflet-geojson data="{{sampleGeoJson}}">
+        </leaflet-geojson> -->
       </leaflet-map>
+
       <!--       <div>[[queryResult]]</div> -->
     </div>
 
@@ -199,6 +199,12 @@
           _ppb_disabled: {
             type: Boolean,
             value: false
+          },
+          sampleGeoJson: {
+            type: Array,
+            value: {
+              "type": "Point", "coordinates": [-105.01621, 39.57422]
+            }
           }
         };
       }
@@ -235,6 +241,11 @@
       openDrawer() {
         console.log("Open")
         this.$.drawer.toggle();
+      }
+
+      openDialog() {
+        console.log('Click');
+        this.$.dialogTemp.open()
       }
 
     }
